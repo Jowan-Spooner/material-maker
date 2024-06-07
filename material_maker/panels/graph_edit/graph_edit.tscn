@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://dy1u50we7gtru"]
+[gd_scene load_steps=9 format=3 uid="uid://dy1u50we7gtru"]
 
 [ext_resource type="Script" path="res://material_maker/panels/graph_edit/graph_edit.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://c0j4px4n72di5" path="res://material_maker/icons/icons.tres" id="2"]
+[ext_resource type="Script" path="res://material_maker/panels/graph_edit/arrange_nodes.gd" id="2_1vc5d"]
 [ext_resource type="Script" path="res://material_maker/tools/undo_redo/undo_redo.gd" id="3"]
 [ext_resource type="PackedScene" uid="uid://buj231c2gxm4o" path="res://material_maker/widgets/desc_button/desc_button.tscn" id="4"]
 
@@ -40,6 +41,12 @@ offset_left = -698.0
 offset_top = 11.0
 offset_bottom = 24.0
 alignment = 2
+
+[node name="Arrange" type="Button" parent="GraphUI" node_paths=PackedStringArray("graph")]
+layout_mode = 2
+text = "Arrange"
+script = ExtResource("2_1vc5d")
+graph = NodePath("../..")
 
 [node name="SubGraphUI" type="HBoxContainer" parent="GraphUI"]
 layout_mode = 2
@@ -89,6 +96,7 @@ script = ExtResource("3")
 [connection signal="paste_nodes_request" from="." to="." method="paste"]
 [connection signal="visibility_changed" from="." to="." method="_on_GraphEdit_visibility_changed"]
 [connection signal="timeout" from="Timer" to="." method="do_send_changed_signal"]
+[connection signal="pressed" from="GraphUI/Arrange" to="GraphUI/Arrange" method="_on_pressed"]
 [connection signal="text_changed" from="GraphUI/SubGraphUI/Label" to="." method="_on_Label_text_changed"]
 [connection signal="descriptions_changed" from="GraphUI/SubGraphUI/Description" to="." method="_on_Description_descriptions_changed"]
 [connection signal="toggled" from="GraphUI/SubGraphUI/ButtonTransmitsSeed" to="." method="_on_ButtonTransmitsSeed_toggled"]
