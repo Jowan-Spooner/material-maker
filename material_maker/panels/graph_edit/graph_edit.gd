@@ -120,6 +120,9 @@ func process_port_click(pressed : bool):
 							port_click_port_index = -1
 						return
 
+var right_click_dragging := false
+var right_click_drag_line: PackedVector2Array = []
+
 func _gui_input(event) -> void:
 	if (
 		event.is_action_pressed("ui_library_popup")
@@ -171,10 +174,24 @@ func _gui_input(event) -> void:
 								if c.has_method("on_clicked_output"):
 									c.on_clicked_output(slot.index, Input.is_key_pressed(KEY_SHIFT))
 									return
-			# Only popup the UI library if Ctrl is not pressed to avoid conflicting
-			# with the Ctrl + Space shortcut.
-			node_popup.position = Vector2i(get_screen_transform()*get_local_mouse_position())
-			node_popup.show_popup()
+			if Input.is_key_pressed(KEY_CTRL) or Input.is_key_pressed(KEY_SHIFT):
+				right_click_dragging = true
+				right_click_drag_line = [get_local_mouse_position()]
+				print("DRAG START")
+			else:
+				# Only popup the UI library if Ctrl is not pressed to avoid conflicting
+				# with the Ctrl + Space shortcut.
+				node_popup.position = Vector2i(get_screen_transform()*get_local_mouse_position())
+				node_popup.show_popup()
+		elif event.button_index == MOUSE_BUTTON_RIGHT and not event.pressed:
+			print("DRAG END")
+			right_click_drag_line.append(get_local_mouse_position())
+			right_click_dragging = false
+			print(right_click_drag_line)
+			queue_redraw()
+			if Input.is_key_pressed(KEY_CTRL):
+				cut_connections_on_line(right_click_drag_line)
+
 		else:
 			if event.button_index == MOUSE_BUTTON_LEFT:
 				if event.double_click:
@@ -183,6 +200,11 @@ func _gui_input(event) -> void:
 				else:
 					process_port_click(event.is_pressed())
 			call_deferred("check_previews")
+	elif event is InputEventMouseMotion and right_click_dragging:
+		print("DRAG CONTINUE")
+		if right_click_drag_line[-1].distance_to(get_local_mouse_position()) > 10:
+			right_click_drag_line.append(get_local_mouse_position())
+		queue_redraw()
 	elif event is InputEventKey:
 		if event.pressed:
 			var scancode_with_modifiers = event.get_keycode_with_modifiers()
@@ -234,6 +256,10 @@ func get_padded_node_rect(graph_node:GraphNode) -> Rect2:
 	rect.size.x += padding*2
 	return Rect2(rect.position, rect.size)
 
+
+func _draw() -> void:
+	if right_click_dragging:
+		draw_polyline(right_click_drag_line, Color.PURPLE, 2)
 
 # Misc. useful functions
 func get_source(node, port) -> Dictionary:
@@ -1332,5 +1358,64 @@ func add_reroute_to_output(node : MMGraphNodeMinimal, port_index : int) -> void:
 			do_disconnect_node(d.from_node, d.from_port, d.to_node, d.to_port)
 			reroute_connections.push_back({ from="reroute", from_port=0, to=get_node(NodePath(d.to_node)).generator.name, to_port=d.to_port })
 		do_create_nodes({nodes=[ reroute_node ],connections=reroute_connections})
+	var next = generator.serialize()
+	undoredo_create_step("Reroute output", generator.get_hier_name(), prev, next)
+
+
+func get_connections_on_line(line:PackedVector2Array) -> Dictionary:
+	var crossed_connections := {}
+	for x in range(line.size()-1):
+		var pos1 = line[x]
+		var pos2 = line[x+1]
+		var intersect_rect := Rect2(pos1.min(pos2), pos1.max(pos2)-pos1.min(pos2))
+		for connection in get_connections_intersecting_with_rect(intersect_rect):
+			var connection_id: String = connection.from_node+str(connection.from_port)+connection.to_node+str(connection.to_port)
+			if not connection_id in crossed_connections:
+				crossed_connections[connection_id] = connection
+				crossed_connections[connection_id]["cross_position"] = line[x].lerp(line[x+1], 0.5)
+
+	return crossed_connections
+
+func cut_connections_on_line(line:PackedVector2Array) -> void:
+	var crossed_connections = get_connections_on_line(line)
+	print(crossed_connections)
+	var redo_actions := []
+	var undo_actions := []
+	for connection in crossed_connections.values():
+		var from_gen = get_node(str(connection.from_node)).generator
+		var to_gen = get_node(str(connection.to_node)).generator
+		if do_disconnect_node(connection.from_node, connection.from_port, connection.to_node, connection.to_port):
+			var generator_hier_name : String = generator.get_hier_name()
+			var c_info = {from=from_gen.name, from_port=connection.from_port, to=to_gen.name, to_port=connection.to_port}
+			undo_actions.append({ type="add_to_graph", parent=generator_hier_name, generators=[], connections=[c_info] })
+			redo_actions.append({type="remove_connections", parent=generator_hier_name, connections=[c_info]})
+		#on_disconnect_node(connection.from_node, connection.from_port, connection.to_node, connection.to_port)
+	if not redo_actions.is_empty():
+		undoredo.add("Disconnect nodes", undo_actions, redo_actions)
+
+
+func reroute_connections_on_line(line:PackedVector2Array) -> void:
+	var crossed_connections = get_connections_on_line(line)
+
+	var prev = generator.serialize()
+	var reroutes := {}
+	for connection in crossed_connections.values():
+		var reroute_id: String = connection.from_node+str(connection.from_port)
+		if not reroute_id in reroutes:
+			reroutes[reroute_id] = {points=[], connections=[]}
+		reroutes[reroute_id].points.append(connection["cross_position"])
+		reroutes[reroute_id].connections.append(connection)
+
+	for reroute_id in reroutes:
+		var reroute = reroutes[reroute_id]
+		var final_position := Vector2()
+		var position_influence := 1
+		for con in reroute.connections:
+			do_disconnect_node(con.from_node, con.from_port, con.to_node, con.to_port)
+			final_position = final_position.lerp(con.cross_position, 1/position_influence)
+			position_influence += 1
+
+
+
 	var next = generator.serialize()
 	undoredo_create_step("Reroute output", generator.get_hier_name(), prev, next)
