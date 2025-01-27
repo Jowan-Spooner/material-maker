@@ -1,15 +1,27 @@
-[gd_scene load_steps=4 format=3 uid="uid://dwr4qxlm6ebuc"]
+[gd_scene load_steps=5 format=3 uid="uid://dwr4qxlm6ebuc"]
 
 [ext_resource type="PackedScene" uid="uid://bb76ty33yvxj2" path="res://material_maker/windows/environment_editor/environment_editor_viewport.tscn" id="1"]
-[ext_resource type="Script" path="res://material_maker/windows/environment_editor/environment_editor.gd" id="2"]
+[ext_resource type="Script" uid="uid://qvs2b46to53o" path="res://material_maker/windows/environment_editor/environment_editor.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://rflulhsuy3ax" path="res://material_maker/widgets/float_edit/float_edit.tscn" id="3"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6a4b1"]
+
 [node name="EnvironmentEditor" type="Window"]
+title = "Environment Editor"
+position = Vector2i(0, 36)
+size = Vector2i(1055, 560)
 exclusive = true
 script = ExtResource("2")
 
+[node name="ColorRect" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"MM_MainBackground"
+
 [node name="Main" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(800, 500)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -20,87 +32,136 @@ offset_bottom = -6.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HSplitContainer" type="HBoxContainer" parent="Main"]
+[node name="HSplitContainer" type="HSplitContainer" parent="Main"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Environments" type="ItemList" parent="Main/HSplitContainer"]
-custom_minimum_size = Vector2(112, 100)
+[node name="Panel" type="PanelContainer" parent="Main/HSplitContainer"]
 layout_mode = 2
+theme_type_variation = &"MM_PanelBackground"
+
+[node name="VBox" type="VBoxContainer" parent="Main/HSplitContainer/Panel"]
+layout_mode = 2
+
+[node name="MenuBar" type="ScrollContainer" parent="Main/HSplitContainer/Panel/VBox"]
+unique_name_in_owner = true
+clip_contents = false
+layout_mode = 2
+theme_type_variation = &"MM_PanelMenuBackground"
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+
+[node name="HBox" type="HFlowContainer" parent="Main/HSplitContainer/Panel/VBox/MenuBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MainMenu" type="PanelContainer" parent="Main/HSplitContainer/Panel/VBox/MenuBar/HBox"]
+layout_mode = 2
+size_flags_vertical = 0
+theme_type_variation = &"MM_PanelMenuBar"
+
+[node name="HBox" type="HBoxContainer" parent="Main/HSplitContainer/Panel/VBox/MenuBar/HBox/MainMenu"]
+layout_mode = 2
+theme_type_variation = &"MM_PanelMenuBar"
+
+[node name="CreateNew" type="Button" parent="Main/HSplitContainer/Panel/VBox/MenuBar/HBox/MainMenu/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+tooltip_text = "Create New Environment"
+icon_alignment = 1
+
+[node name="Download" type="Button" parent="Main/HSplitContainer/Panel/VBox/MenuBar/HBox/MainMenu/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+tooltip_text = "Download Environment"
+icon_alignment = 1
+
+[node name="Environments" type="ItemList" parent="Main/HSplitContainer/Panel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 100)
+layout_mode = 2
+size_flags_vertical = 3
 max_columns = 4
 same_column_width = true
-fixed_column_width = 96
+fixed_column_width = 130
 icon_mode = 0
 
-[node name="ContextMenu" type="PopupMenu" parent="Main/HSplitContainer/Environments"]
+[node name="ContextMenu" type="PopupMenu" parent="Main/HSplitContainer/Panel/VBox/Environments"]
 item_count = 1
 item_0/text = "Delete environment"
 item_0/id = 0
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="Main/HSplitContainer"]
+[node name="HSplitContainer" type="HSplitContainer" parent="Main/HSplitContainer"]
+layout_mode = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Main/HSplitContainer/HSplitContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 stretch = true
 
-[node name="SubViewport" parent="Main/HSplitContainer/SubViewportContainer" instance=ExtResource("1")]
-size = Vector2i(477, 465)
+[node name="SubViewport" parent="Main/HSplitContainer/HSplitContainer/SubViewportContainer" instance=ExtResource("1")]
+size = Vector2i(588, 513)
 render_target_update_mode = 4
 
-[node name="UI" type="GridContainer" parent="Main/HSplitContainer"]
+[node name="Panel" type="PanelContainer" parent="Main/HSplitContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+theme_type_variation = &"MM_PanelBackground"
+theme_override_styles/panel = SubResource("StyleBoxEmpty_6a4b1")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Main/HSplitContainer/HSplitContainer/Panel"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer"]
+layout_mode = 2
+
+[node name="name" type="LineEdit" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Upload" type="Button" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="UI" type="GridContainer" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 mouse_filter = 2
 columns = 2
 
-[node name="NameLabel" type="Label" parent="Main/HSplitContainer/UI"]
+[node name="NameLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
+visible = false
 layout_mode = 2
-text = "Name:"
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "Name"
 
-[node name="name" type="LineEdit" parent="Main/HSplitContainer/UI"]
+[node name="HdriUrlLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
-size_flags_horizontal = 3
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "HDRI URL"
 
-[node name="HdriUrlLabel" type="Label" parent="Main/HSplitContainer/UI"]
-layout_mode = 2
-text = "HDRI URL:"
-
-[node name="hdri_url" type="LineEdit" parent="Main/HSplitContainer/UI"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="show_color" type="CheckBox" parent="Main/HSplitContainer/UI"]
-layout_mode = 2
-text = "Color:"
-
-[node name="color" type="ColorPickerButton" parent="Main/HSplitContainer/UI"]
+[node name="hdri_url" type="LineEdit" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SkyEnergyLabel" type="Label" parent="Main/HSplitContainer/UI"]
+[node name="show_color" type="CheckBox" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
-text = "Sky Energy:"
+text = "Color"
 
-[node name="sky_energy" parent="Main/HSplitContainer/UI" instance=ExtResource("3")]
-layout_mode = 2
-size_flags_horizontal = 3
-value = 1.0
-max_value = 16.0
-step = 0.1
-float_only = true
-
-[node name="AmbientLightLabel" type="Label" parent="Main/HSplitContainer/UI"]
-layout_mode = 2
-text = "Ambient color:"
-
-[node name="ambient_light_color" type="ColorPickerButton" parent="Main/HSplitContainer/UI"]
+[node name="color" type="ColorPickerButton" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="AmbientLightEnergyLabel" type="Label" parent="Main/HSplitContainer/UI"]
+[node name="SkyEnergyLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
-text = "Ambient Energy:"
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "Sky Energy"
 
-[node name="ambient_light_energy" parent="Main/HSplitContainer/UI" instance=ExtResource("3")]
+[node name="sky_energy" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI" instance=ExtResource("3")]
 layout_mode = 2
 size_flags_horizontal = 3
 value = 1.0
@@ -108,30 +169,55 @@ max_value = 16.0
 step = 0.1
 float_only = true
 
-[node name="AmbientLightSkyContributionLabel" type="Label" parent="Main/HSplitContainer/UI"]
+[node name="AmbientLightLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
-text = "Sky contribution:"
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "Ambient color"
 
-[node name="ambient_light_sky_contribution" parent="Main/HSplitContainer/UI" instance=ExtResource("3")]
+[node name="ambient_light_color" type="ColorPickerButton" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AmbientLightEnergyLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
+layout_mode = 2
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "Ambient Energy"
+
+[node name="ambient_light_energy" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI" instance=ExtResource("3")]
+layout_mode = 2
+size_flags_horizontal = 3
+value = 1.0
+max_value = 16.0
+step = 0.1
+float_only = true
+
+[node name="AmbientLightSkyContributionLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
+layout_mode = 2
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "Sky contribution"
+
+[node name="ambient_light_sky_contribution" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI" instance=ExtResource("3")]
 layout_mode = 2
 size_flags_horizontal = 3
 value = 1.0
 step = 0.01
 float_only = true
 
-[node name="SunLabel" type="Label" parent="Main/HSplitContainer/UI"]
+[node name="SunLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
-text = "Sun color:"
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "Sun color"
 
-[node name="sun_color" type="ColorPickerButton" parent="Main/HSplitContainer/UI"]
+[node name="sun_color" type="ColorPickerButton" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SunEnergyLabel" type="Label" parent="Main/HSplitContainer/UI"]
+[node name="SunEnergyLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
-text = "Sun Energy:"
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "Sun Energy"
 
-[node name="sun_energy" parent="Main/HSplitContainer/UI" instance=ExtResource("3")]
+[node name="sun_energy" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI" instance=ExtResource("3")]
 layout_mode = 2
 size_flags_horizontal = 3
 value = 1.0
@@ -139,11 +225,12 @@ max_value = 16.0
 step = 0.1
 float_only = true
 
-[node name="SunDirectionLabel" type="Label" parent="Main/HSplitContainer/UI"]
+[node name="SunDirectionLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
-text = "Sun Direction:"
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "Sun Direction"
 
-[node name="sun_direction" parent="Main/HSplitContainer/UI" instance=ExtResource("3")]
+[node name="sun_direction" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI" instance=ExtResource("3")]
 layout_mode = 2
 size_flags_horizontal = 3
 value = 0.0
@@ -152,11 +239,12 @@ max_value = 180.0
 step = 0.1
 float_only = true
 
-[node name="SunAngleLabel" type="Label" parent="Main/HSplitContainer/UI"]
+[node name="SunAngleLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
-text = "Sun Angle:"
+theme_type_variation = &"MM_NodePropertyLabel"
+text = "Sun Angle"
 
-[node name="sun_angle" parent="Main/HSplitContainer/UI" instance=ExtResource("3")]
+[node name="sun_angle" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI" instance=ExtResource("3")]
 layout_mode = 2
 size_flags_horizontal = 3
 value = 0.0
@@ -170,10 +258,12 @@ layout_mode = 2
 size_flags_horizontal = 4
 
 [node name="Download" type="Button" parent="Main/Buttons"]
+visible = false
 layout_mode = 2
 text = "Download environment"
 
 [node name="Share" type="Button" parent="Main/Buttons"]
+visible = false
 layout_mode = 2
 text = "Upload environment"
 
@@ -183,11 +273,11 @@ text = "Close"
 
 [connection signal="close_requested" from="." to="." method="queue_free"]
 [connection signal="minimum_size_changed" from="Main" to="." method="_on_Main_minimum_size_changed"]
-[connection signal="gui_input" from="Main/HSplitContainer/Environments" to="." method="_on_Environments_gui_input"]
-[connection signal="item_selected" from="Main/HSplitContainer/Environments" to="." method="_on_Environments_item_selected"]
-[connection signal="id_pressed" from="Main/HSplitContainer/Environments/ContextMenu" to="." method="_on_ContextMenu_id_pressed"]
-[connection signal="gui_input" from="Main/HSplitContainer/SubViewportContainer" to="." method="_on_ViewportContainer_gui_input"]
-[connection signal="resized" from="Main/HSplitContainer/SubViewportContainer" to="." method="_on_ViewportContainer_resized"]
+[connection signal="gui_input" from="Main/HSplitContainer/Panel/VBox/Environments" to="." method="_on_Environments_gui_input"]
+[connection signal="item_selected" from="Main/HSplitContainer/Panel/VBox/Environments" to="." method="_on_Environments_item_selected"]
+[connection signal="id_pressed" from="Main/HSplitContainer/Panel/VBox/Environments/ContextMenu" to="." method="_on_ContextMenu_id_pressed"]
+[connection signal="gui_input" from="Main/HSplitContainer/HSplitContainer/SubViewportContainer" to="." method="_on_ViewportContainer_gui_input"]
+[connection signal="resized" from="Main/HSplitContainer/HSplitContainer/SubViewportContainer" to="." method="_on_ViewportContainer_resized"]
 [connection signal="pressed" from="Main/Buttons/Download" to="." method="_on_Download_pressed"]
 [connection signal="pressed" from="Main/Buttons/Share" to="." method="_on_Share_pressed"]
 [connection signal="pressed" from="Main/Buttons/Close" to="." method="queue_free"]

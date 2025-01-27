@@ -2,14 +2,14 @@ extends Window
 
 @onready var environment_manager = get_node("/root/MainWindow/EnvironmentManager")
 
-@onready var environment_list : ItemList = $Main/HSplitContainer/Environments
-@onready var camera : Camera3D = $Main/HSplitContainer/SubViewportContainer/SubViewport/CameraPosition/CameraRotation1/CameraRotation2/Camera3D
-@onready var camera_position = $Main/HSplitContainer/SubViewportContainer/SubViewport/CameraPosition
-@onready var camera_rotation1 = $Main/HSplitContainer/SubViewportContainer/SubViewport/CameraPosition/CameraRotation1
-@onready var camera_rotation2 = $Main/HSplitContainer/SubViewportContainer/SubViewport/CameraPosition/CameraRotation1/CameraRotation2
+@onready var environment_list : ItemList = %Environments
+@onready var camera : Camera3D = %SubViewportContainer/SubViewport/CameraPosition/CameraRotation1/CameraRotation2/Camera3D
+@onready var camera_position = %SubViewportContainer/SubViewport/CameraPosition
+@onready var camera_rotation1 = %SubViewport/CameraPosition/CameraRotation1
+@onready var camera_rotation2 = %SubViewportContainer/SubViewport/CameraPosition/CameraRotation1/CameraRotation2
 @onready var environment : Environment = camera.environment
-@onready var sun : DirectionalLight3D = $Main/HSplitContainer/SubViewportContainer/SubViewport/Sun
-@onready var ui : GridContainer = $Main/HSplitContainer/UI
+@onready var sun : DirectionalLight3D = %SubViewportContainer/SubViewport/Sun
+@onready var ui : GridContainer = %UI
 
 var share_button
 
@@ -18,6 +18,9 @@ var new_environment_icon = preload("res://material_maker/windows/environment_edi
 var current_environment = -1
 
 func _ready():
+	%CreateNew.icon = get_theme_icon("add", "MM_Icons", )
+	%Download.icon = get_theme_icon("download", "MM_Icons")
+
 	popup_centered()
 	_on_ViewportContainer_resized()
 	connect_controls()
@@ -64,8 +67,8 @@ func read_environment_list(select : int = 0):
 		environment_list.add_item(e.name)
 		if e.has("thumbnail"):
 			environment_list.set_item_icon(environment_list.get_item_count()-1, e.thumbnail)
-	environment_list.add_item("New...")
-	environment_list.set_item_icon(environment_list.get_item_count()-1, new_environment_icon)
+	#environment_list.add_item("New...")
+	#environment_list.set_item_icon(environment_list.get_item_count()-1, new_environment_icon)
 	if environment_list.get_item_count() > 1:
 		if select < 0:
 			select += environment_list.get_item_count()-1
@@ -73,7 +76,7 @@ func read_environment_list(select : int = 0):
 		set_current_environment(select)
 
 func _on_ViewportContainer_resized():
-	$Main/HSplitContainer/SubViewportContainer/SubViewport.size = $Main/HSplitContainer/SubViewportContainer.size
+	%SubViewportContainer/SubViewport.size = %SubViewportContainer.size
 
 func _on_name_text_entered(new_text : String):
 	environment_list.set_item_text(current_environment, new_text)
@@ -133,22 +136,22 @@ func set_current_environment(index : int) -> void:
 			c.disabled = read_only
 
 func _on_Environments_item_selected(index):
-	if index == environment_list.get_item_count()-1:
-		environment_list.remove_item(index)
-		environment_list.add_item("")
-		environment_manager.new_environment(current_environment)
-		environment_list.add_item("New...")
-		environment_list.set_item_icon(environment_list.get_item_count()-1, new_environment_icon)
-		environment_list.select(index)
+	#if index == environment_list.get_item_count()-1:
+		#environment_list.remove_item(index)
+		#environment_list.add_item("")
+		#environment_manager.new_environment(current_environment)
+		#environment_list.add_item("New...")
+		#environment_list.set_item_icon(environment_list.get_item_count()-1, new_environment_icon)
+		#environment_list.select(index)
 	set_current_environment(index)
 
 func _on_Environments_gui_input(event):
 	if ! (event is InputEventMouseButton) or event.button_index != MOUSE_BUTTON_RIGHT:
 		return
-	var context_menu : PopupMenu = $Main/HSplitContainer/Environments/ContextMenu
+	var context_menu : PopupMenu = %Environments/ContextMenu
 	var index = environment_list.get_item_at_position(event.position)
 	if environment_list.is_selected(index) and ! environment_manager.is_read_only(index):
-		mm_globals.popup_menu(context_menu, $Main/HSplitContainer/Environments)
+		mm_globals.popup_menu(context_menu, environment_list)
 
 func _on_ContextMenu_id_pressed(id):
 	var index = environment_list.get_selected_items()[0]
