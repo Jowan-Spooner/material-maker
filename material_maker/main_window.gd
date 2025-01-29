@@ -115,6 +115,8 @@ func _enter_tree() -> void:
 	mm_globals.main_window = self
 
 func _ready() -> void:
+
+	get_tree().node_added.connect(func(node:Node): if node is Window: node.content_scale_factor = mm_globals.get_config("ui_scale"))
 	get_window().borderless = false
 	get_window().transparent = false
 	get_window().move_to_foreground()
