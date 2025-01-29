@@ -1,10 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dwr4qxlm6ebuc"]
+[gd_scene load_steps=4 format=3 uid="uid://dwr4qxlm6ebuc"]
 
 [ext_resource type="PackedScene" uid="uid://bb76ty33yvxj2" path="res://material_maker/windows/environment_editor/environment_editor_viewport.tscn" id="1"]
 [ext_resource type="Script" uid="uid://qvs2b46to53o" path="res://material_maker/windows/environment_editor/environment_editor.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://rflulhsuy3ax" path="res://material_maker/widgets/float_edit/float_edit.tscn" id="3"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6a4b1"]
 
 [node name="EnvironmentEditor" type="Window"]
 title = "Environment Editor"
@@ -71,11 +69,11 @@ layout_mode = 2
 tooltip_text = "Create New Environment"
 icon_alignment = 1
 
-[node name="Download" type="Button" parent="Main/HSplitContainer/Panel/VBox/MenuBar/HBox/MainMenu/HBox"]
+[node name="Remove" type="Button" parent="Main/HSplitContainer/Panel/VBox/MenuBar/HBox/MainMenu/HBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(25, 25)
 layout_mode = 2
-tooltip_text = "Download Environment"
+tooltip_text = "Remove Environment"
 icon_alignment = 1
 
 [node name="Environments" type="ItemList" parent="Main/HSplitContainer/Panel/VBox"]
@@ -92,6 +90,14 @@ icon_mode = 0
 item_count = 1
 item_0/text = "Delete environment"
 item_0/id = 0
+
+[node name="Download" type="Button" parent="Main/HSplitContainer/Panel/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+tooltip_text = "Browse Community Environments"
+text = "Browse"
+clip_text = true
 
 [node name="HSplitContainer" type="HSplitContainer" parent="Main/HSplitContainer"]
 layout_mode = 2
@@ -111,33 +117,27 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.5
 theme_type_variation = &"MM_PanelBackground"
-theme_override_styles/panel = SubResource("StyleBoxEmpty_6a4b1")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Main/HSplitContainer/HSplitContainer/Panel"]
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer"]
-layout_mode = 2
-
-[node name="name" type="LineEdit" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Upload" type="Button" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 
 [node name="UI" type="GridContainer" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 2
 columns = 2
 
 [node name="NameLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
-visible = false
 layout_mode = 2
 theme_type_variation = &"MM_NodePropertyLabel"
 text = "Name"
+
+[node name="name" type="LineEdit" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="HdriUrlLabel" type="Label" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer/UI"]
 layout_mode = 2
@@ -252,6 +252,11 @@ min_value = -90.0
 max_value = 90.0
 step = 0.1
 float_only = true
+
+[node name="Upload" type="Button" parent="Main/HSplitContainer/HSplitContainer/Panel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Upload"
 
 [node name="Buttons" type="HBoxContainer" parent="Main"]
 layout_mode = 2

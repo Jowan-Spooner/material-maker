@@ -18,7 +18,9 @@ var new_environment_icon = preload("res://material_maker/windows/environment_edi
 var current_environment = -1
 
 func _ready():
-	%CreateNew.icon = get_theme_icon("add", "MM_Icons", )
+	%CreateNew.icon = get_theme_icon("add", "MM_Icons")
+	%Remove.icon = get_theme_icon("delete", "MM_Icons")
+	%Upload.icon = get_theme_icon("upload", "MM_Icons")
 	%Download.icon = get_theme_icon("download", "MM_Icons")
 
 	popup_centered()
@@ -130,7 +132,7 @@ func set_current_environment(index : int) -> void:
 	environment_manager.apply_environment(index, environment, sun)
 	var read_only : bool = environment_manager.is_read_only(index)
 	for c in ui.get_children():
-		if c is LineEdit:
+		if "editable" in c:
 			c.editable = !read_only
 		elif c is ColorPickerButton or c is CheckBox:
 			c.disabled = read_only
