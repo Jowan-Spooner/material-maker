@@ -5,14 +5,17 @@ signal return_status(status)
 
 
 func _ready():
+	close_requested.connect(close)
 	await get_tree().process_frame
 	_on_MarginContainer_minimum_size_changed()
 
-func _on_LoginButton_pressed():
-	emit_signal("return_status", "ok")
 
-func _on_LoginDialog_popup_hide() -> void:
-	emit_signal("return_status", "cancel")
+func _on_LoginButton_pressed():
+	return_status.emit("ok")
+
+func close() -> void:
+	return_status.emit("cancel")
+	queue_free()
 
 func ask(user : String, password : String) -> Dictionary:
 	mm_globals.main_window.add_dialog(self)
